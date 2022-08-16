@@ -7,19 +7,24 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
 
 public class Jogo extends ApplicationAdapter {
+	private int count = 0;
+	private SpriteBatch batch;
+	private Texture bird;
 	
 	@Override
 	public void create () {
-		Gdx.app.log("create", "Jogo iniciado");
+		batch = new SpriteBatch();
+		bird = new Texture("passaro1.png");
 	}
 
 	@Override
 	public void render () {
-		Gdx.app.log("create", "Jogo renderizado");
+		batch.begin();
+		batch.draw(bird, 300, 500);
+		batch.end();
 	}
 	
 	@Override
 	public void dispose () {
-		Gdx.app.log("create", "Jogo finalizado");
 	}
 }
