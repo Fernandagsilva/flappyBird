@@ -7,20 +7,34 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
 
 public class Jogo extends ApplicationAdapter {
-	private int count = 0;
+	private int moveX = 0;
+	private int moveY = 0;
 	private SpriteBatch batch;
 	private Texture bird;
-	
+	private Texture background;
+
+	private float width;
+	private float height;
+
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
 		bird = new Texture("passaro1.png");
+		background = new Texture("fundo.png");
+
+		width = Gdx.graphics.getWidth();
+		height = Gdx.graphics.getHeight();
 	}
 
 	@Override
 	public void render () {
 		batch.begin();
-		batch.draw(bird, 300, 500);
+
+		batch.draw(background, 0, 0, width, height);
+		batch.draw(bird, moveX, moveY);
+
+		moveX++;
+		moveY++;
 		batch.end();
 	}
 	
