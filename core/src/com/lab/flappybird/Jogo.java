@@ -5,12 +5,16 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.utils.viewport.StretchViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
 
 import java.util.Random;
 
@@ -56,6 +60,12 @@ public class Jogo extends ApplicationAdapter {
 	private int points = 0;
 	private int highestScore = 0;
 
+	/* Config camera */
+	private OrthographicCamera camera;
+	private Viewport viewport;
+	private final float VIRTUAL_WIDTH = 720;
+	private final float VIRTUAL_HEIGHT = 1280;
+
 	@Override
 	public void create () {
 		initializeTextures();
@@ -64,6 +74,10 @@ public class Jogo extends ApplicationAdapter {
 
 	@Override
 	public void render () {
+
+		/* clear lasts frames  */
+		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
+
 		verifyGameState();
 		validatePoints();
 		drawTextures();
@@ -71,6 +85,7 @@ public class Jogo extends ApplicationAdapter {
 	}
 
 	private void drawTextures(){
+		batch.setProjectionMatrix(camera.combined);
 		batch.begin();
 
 		/* Draw birds and pipes positions */
@@ -212,8 +227,8 @@ public class Jogo extends ApplicationAdapter {
 		random = new Random();
 
 		/* Initialize bird and pipes positions */
-		width = Gdx.graphics.getWidth();
-		height = Gdx.graphics.getHeight();
+		width = VIRTUAL_WIDTH;
+		height = VIRTUAL_HEIGHT;
 		startPositionHeight = height/2;
 		pipeWidthPosition = width;
 		pipesSpaceBetween = 350;
@@ -246,6 +261,16 @@ public class Jogo extends ApplicationAdapter {
 		/* Config preferences */
 		preferences = Gdx.app.getPreferences("flappyBird");
 		highestScore = preferences.getInteger("highestScore", 0);
+
+		/* Config camera */
+		camera = new OrthographicCamera();
+		camera.position.set(VIRTUAL_WIDTH/2, VIRTUAL_HEIGHT/2, 0);
+		viewport = new StretchViewport(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, camera);
+	}
+
+	@Override
+	public void resize(int width, int height){
+		viewport.update(width, height);
 	}
 	
 	@Override
