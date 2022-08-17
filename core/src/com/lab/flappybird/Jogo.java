@@ -16,6 +16,8 @@ public class Jogo extends ApplicationAdapter {
 	private float width;
 	private float height;
 	private float variation = 0;
+	private  float gravity = 0;
+	private float startPositionY = 0;
 
 	@Override
 	public void create () {
@@ -29,6 +31,7 @@ public class Jogo extends ApplicationAdapter {
 
 		width = Gdx.graphics.getWidth();
 		height = Gdx.graphics.getHeight();
+		startPositionY = height/2;
 	}
 
 	@Override
@@ -38,12 +41,22 @@ public class Jogo extends ApplicationAdapter {
 		if(variation > 3)
 			variation = 0;
 
+		if(Gdx.input.justTouched()){
+			gravity = -15;
+		}
+
+		if(startPositionY > 0 || gravity < 0)
+			startPositionY = startPositionY - gravity;
+
 		batch.draw(background, 0, 0, width, height);
-		batch.draw(birds[(int)  variation], 30, height/2);
+		batch.draw(birds[(int)  variation], 30, startPositionY);
 
 		variation += Gdx.graphics.getDeltaTime() * 10;
+
+		gravity++;
 		moveX++;
 		moveY++;
+
 		batch.end();
 	}
 	
