@@ -2,6 +2,7 @@ package com.lab.flappybird;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
@@ -43,13 +44,17 @@ public class Jogo extends ApplicationAdapter {
 	BitmapFont textPoints;
 	BitmapFont restartText;
 	BitmapFont highestScoreText;
-	private int points = 0;
 	private String gameState = "startGame";
 
 	/* Sounds config  */
 	Sound birdFlyingSound;
 	Sound collisionSound;
 	Sound pointSound;
+
+	/* Preferences  */
+	Preferences preferences;
+	private int points = 0;
+	private int highestScore = 0;
 
 	@Override
 	public void create () {
@@ -81,7 +86,7 @@ public class Jogo extends ApplicationAdapter {
 		if(gameState == "collision"){
 			batch.draw(gameOver, (width - gameOver.getWidth())/2, height/2);
 			restartText.draw(batch, "Touch to Restart!", width/2 -140, height/2 - gameOver.getHeight()/2);
-			highestScoreText.draw(batch, "Highest score: 0 points", width/2 -140, height/2- gameOver.getHeight());
+			highestScoreText.draw(batch, "Highest score: "+ highestScore + " points", width/2 -140, height/2- gameOver.getHeight());
 		}
 
 		batch.end();
@@ -117,13 +122,24 @@ public class Jogo extends ApplicationAdapter {
 					touchPipe = false;
 				}
 
-				if(startPositionHeight > 0 || gravity < 0)
+				if(startPositionHeight > 0 || touched)
 					startPositionHeight = startPositionHeight - gravity;
 
 				gravity++;
 				break;
 			/* Execute case have a collision */
 			case "collision":
+				/* make bird fall */
+				if(startPositionHeight > 0 || touched)
+					startPositionHeight = startPositionHeight - gravity;
+				gravity++;
+
+				/* verify highest score */
+				if(points > highestScore){
+					highestScore = points;
+					preferences.putInteger("highestScore", highestScore);
+				}
+
 				/* Apply touch event to restart game */
 				if(touched){
 					gameState = "startGame";
@@ -226,6 +242,10 @@ public class Jogo extends ApplicationAdapter {
 		birdFlyingSound = Gdx.audio.newSound(Gdx.files.internal("som_asa.wav"));
 		collisionSound = Gdx.audio.newSound(Gdx.files.internal("som_batida.wav"));
 		pointSound = Gdx.audio.newSound(Gdx.files.internal("som_pontos.wav"));
+
+		/* Config preferences */
+		preferences = Gdx.app.getPreferences("flappyBird");
+		highestScore = preferences.getInteger("highestScore", 0);
 	}
 	
 	@Override
