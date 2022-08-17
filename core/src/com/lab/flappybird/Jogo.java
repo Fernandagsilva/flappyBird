@@ -5,6 +5,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
+import java.util.Random;
+
 public class Jogo extends ApplicationAdapter {
 	private SpriteBatch batch;
 	private Texture[] birds;
@@ -18,7 +20,9 @@ public class Jogo extends ApplicationAdapter {
 	private  float gravity = 0;
 	private float startPositionY = 0;
 	private float pipeWidthPosition;
+	private float pipeHeightPosition;
 	private float pipesSpaceBetween;
+	private Random random;
 
 	@Override
 	public void create () {
@@ -37,15 +41,23 @@ public class Jogo extends ApplicationAdapter {
 
 		batch.draw(background, 0, 0, width, height);
 		batch.draw(birds[(int)  variation], 30, startPositionY);
-		batch.draw(pipeBottom, pipeWidthPosition - 100, height/2 - pipeBottom.getHeight() - (pipesSpaceBetween/2));
-		batch.draw(pipeTop, pipeWidthPosition - 100, height/2 + (pipesSpaceBetween/2));
+		batch.draw(pipeBottom, pipeWidthPosition, height/2 - pipeBottom.getHeight() - pipesSpaceBetween/2 + pipeHeightPosition);
+		batch.draw(pipeTop, pipeWidthPosition, height/2 + pipesSpaceBetween/2 + pipeHeightPosition);
 
 		batch.end();
 
 	}
 
 	private void verifyState(){
-		if(Gdx.input.justTouched()){
+		pipeWidthPosition -= Gdx.graphics.getDeltaTime() * 200;
+		if(pipeWidthPosition < -pipeTop.getWidth() ){
+			pipeWidthPosition = width;
+			pipeHeightPosition = random.nextInt(800) -400;
+
+		}
+
+		boolean touched = Gdx.input.justTouched();
+		if(touched){
 			gravity = -15;
 		}
 
@@ -72,6 +84,7 @@ public class Jogo extends ApplicationAdapter {
 
 	private void initializeObject(){
 		batch = new SpriteBatch();
+		random = new Random();
 
 		width = Gdx.graphics.getWidth();
 		height = Gdx.graphics.getHeight();
