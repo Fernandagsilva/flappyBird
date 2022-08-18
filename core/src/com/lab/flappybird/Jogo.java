@@ -18,7 +18,22 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 
 import java.util.Random;
 
+
+
 public class Jogo extends ApplicationAdapter {
+
+	/*
+	 * Enum para controle do estado do jogo.
+	 */
+	public enum StatusJogo{
+		STARTGAME(1), PLAYINGGAME(2), COLLISION(3);
+
+		public final int valor;
+
+		StatusJogo(int valor){
+			this.valor = valor;
+		}
+	}
 	/* Textures */
 	private SpriteBatch batch;
 	private Texture[] birds;
