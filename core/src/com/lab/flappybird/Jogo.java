@@ -63,7 +63,7 @@ public class Jogo extends ApplicationAdapter {
 	BitmapFont textPoints;
 	BitmapFont restartText;
 	BitmapFont highestScoreText;
-	private String gameState = "startGame";
+	private StatusJogo gameState = StatusJogo.STARTGAME;
 
 	/* Sounds config  */
 	Sound birdFlyingSound;
@@ -113,7 +113,7 @@ public class Jogo extends ApplicationAdapter {
 		textPoints.draw(batch, String.valueOf(points), width/2, height - 110);
 
 		/* Draw game over texts positions */
-		if(gameState == "collision"){
+		if(gameState == StatusJogo.COLLISION){
 			batch.draw(gameOver, (width - gameOver.getWidth())/2, height/2);
 			restartText.draw(batch, "Touch to Restart!", width/2 -140, height/2 - gameOver.getHeight()/2);
 			highestScoreText.draw(batch, "Highest score: "+ highestScore + " points", width/2 -140, height/2- gameOver.getHeight());
@@ -129,15 +129,15 @@ public class Jogo extends ApplicationAdapter {
 		/* Verify game state */
 		switch (gameState){
 			/* Execute case player is starting the game */
-			case "startGame":
+			case STARTGAME:
 				if(touched){
 					gravity = -15;
-					gameState = "playingGame";
+					gameState = StatusJogo.PLAYINGGAME;
 					birdFlyingSound.play();
 				}
 				break;
 			/* Execute case player is playing the game */
-			case "playingGame":
+			case PLAYINGGAME:
 				/* Apply touch event while playing */
 				if(touched){
 					gravity = -15;
@@ -158,7 +158,7 @@ public class Jogo extends ApplicationAdapter {
 				gravity++;
 				break;
 			/* Execute case have a collision */
-			case "collision":
+			case COLLISION:
 				/* make bird fall */
 				if(startPositionHeight > 0 || touched)
 					startPositionHeight = startPositionHeight - gravity;
@@ -172,7 +172,7 @@ public class Jogo extends ApplicationAdapter {
 
 				/* Apply touch event to restart game */
 				if(touched){
-					gameState = "startGame";
+					gameState = StatusJogo.STARTGAME;
 					points = 0;
 					gravity = 0;
 					startPositionHeight = height/2;
@@ -195,9 +195,9 @@ public class Jogo extends ApplicationAdapter {
 		boolean touchPipeBottom = Intersector.overlaps(birdCircle, rectanglePipeBottom);
 
 		if(touchPipeBottom || touchPipeTop){
-			if(gameState == "playingGame"){
+			if(gameState == StatusJogo.PLAYINGGAME){
 				collisionSound.play();
-				gameState = "collision";
+				gameState = StatusJogo.COLLISION;
 			}
 
 		}
